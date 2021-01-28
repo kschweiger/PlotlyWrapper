@@ -9,6 +9,7 @@ from .shared import saveFigure
 
 def basicLineChart(series, legend, styles=None, batch=True, plotTitle=None, color="Viridis",
                    xTitle=None, yTitle=None, lineWidth=None, scaleTitles=1, scaleTicks=1,
+                   legend_position = (0.01, 0.99),
                    savePlot=False, height=1000, width=1400, staicFormat="png", filename=None, folder="."):
     """
     Produces a basic plot with mulitple lines
@@ -28,6 +29,7 @@ def basicLineChart(series, legend, styles=None, batch=True, plotTitle=None, colo
       lineWidth (int, list) : Set the line size of all lines (int) or each line (list)
       scaleTitles (float) : Scaling factor for the x,y and plot title
       scaleTicks (float) : Scaling factor for the x,y axis ticks
+      legend_position (tuple) : x and y start postions of the legend
     """
 
     if len(series) != len(legend):
@@ -52,7 +54,15 @@ def basicLineChart(series, legend, styles=None, batch=True, plotTitle=None, colo
         else:
             raise TypeError("Object of type %s was passed for lineWidth but has to be list or int"%(type(styles)))
 
-        
+
+    if not len(legend_position) == 2:
+        raise TypeError("Pass tuple with two elements as legend_position")
+    
+    leg_x, leg_y = legend_position
+    if not (isinstance(leg_x, float) and isinstance(leg_y, float)):
+        raise TypeError("Values in the legend postion must be float")
+
+    logging.debug("Legend postions: x = %s | y = %s", leg_x, leg_y)
 
     fig = go.Figure()
     for i in range(len(series)):
@@ -83,6 +93,13 @@ def basicLineChart(series, legend, styles=None, batch=True, plotTitle=None, colo
                 size=25*scaleTicks,
             ),
         ),
+        legend=dict(
+            yanchor="top",
+            y=leg_y,
+            xanchor="left",
+            x=leg_x,
+            font_size=25*scaleTitles,
+        )
     )
 
         
